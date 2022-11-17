@@ -11,25 +11,19 @@ class Pacman:
         self.center_x = 400
         self.center_y = 300
 
-        self.column_intention = 1
-        self.line_intention = 1
-
         self.size = size
         self.radius = self.size // 2  # 13
 
         self.vel_x = 0
         self.vel_y = 0
 
-    def calculate_rules(self):
-        self.column_intention += self.vel_x
-        self.line_intention += self.vel_y
+    def calculate_rules(self, scenario):
+        if scenario.approved_move(self.column + self.vel_x, self.line + self.vel_y):
+            self.column += self.vel_x
+            self.line += self.vel_y
 
-        self.center_x = self.column * self.size + self.radius
-        self.center_y = self.line * self.size + self.radius
-
-    def accept_move(self):
-        self.column = self.column_intention
-        self.line = self.line_intention
+            self.center_x = self.column * self.size + self.radius
+            self.center_y = self.line * self.size + self.radius
 
     def draw(self, _screen):
         # Body

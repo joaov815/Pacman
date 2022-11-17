@@ -15,12 +15,11 @@ if __name__ == "__main__":
     size = 600 // 30
 
     pacman = Pacman(size)
-    scenario = Scenario(size, pacman)
+    scenario = Scenario(size)
 
     while True:
         # Calculate rules
-        pacman.calculate_rules()
-        scenario.calculate_rules()
+        pacman.calculate_rules(scenario)
 
         # Draw screen
         screen.fill(BLACK)
