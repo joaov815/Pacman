@@ -1,11 +1,11 @@
 import pygame.draw
-from colors import BLUE, BLACK, WHITE
+from colors import BLUE, BLACK, WHITE, YELLOW
 
 
 class Scenario:
-    def __init__(self, size, pacman):
-        self.pacman = pacman
+    def __init__(self, size):
         self.size = size
+        self.score = 0
         self.array = [
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
             [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
@@ -56,17 +56,23 @@ class Scenario:
         for index, line in enumerate(self.array):
             self.draw_column(screen, index, line)
 
+        text = "Pontos: {}".format(self.score)
+
+        font = pygame.font.SysFont("arial", 36, True, False)
+        text_image = font.render(text, True, YELLOW)
+
+        screen.blit(text_image, (30 * self.size, 0))
+        pygame.display.update()
+
         # 0 => empty
         # 1 => food
         # 2 => wall
-        # 3 => ...
 
-    def calculate_rules(self):
-        column = self.pacman.column_intention
-        line = self.pacman.line_intention
+    def approved_move(self, column, line):
+        is_move_approved = 0 <= column < 28 and 0 <= line < 29 and self.array[line][column] != 2
 
-        print(column)
-        print(line)
+        if self.array[line][column] == 1:
+            self.array[line][column] = 0
+            self.score += 1
 
-        if 0 <= column < 28 and 0 <= line < 29:
-            self.pacman.accept_move()
+        return is_move_approved
