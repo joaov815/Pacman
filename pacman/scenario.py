@@ -1,8 +1,11 @@
 import pygame.draw
+import directions
+
 from colors import BLUE, BLACK, WHITE, YELLOW
+from game_element import GameElement
 
 
-class Scenario:
+class Scenario(GameElement):
     def __init__(self, size):
         self.size = size
         self.score = 0
@@ -37,15 +40,15 @@ class Scenario:
             [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         ]
+        self.EMPTY_SPACE = 0
+        self.FOOD = 1
+        self.WALL = 2
 
     def draw_column(self, screen, line_index, line):
         for column_index, column in enumerate(line):
             x = column_index * self.size
             y = line_index * self.size
-            color = BLACK
-
-            if column == 2:
-                color = BLUE
+            color = BLUE if column == 2 else BLACK
 
             pygame.draw.rect(screen, color, (x, y, self.size, self.size))
 
@@ -64,15 +67,35 @@ class Scenario:
         screen.blit(text_image, (30 * self.size, 0))
         pygame.display.update()
 
-        # 0 => empty
-        # 1 => food
-        # 2 => wall
+    def get_available_moves_list(self, position):
+        column, line = position
+        moves = []
+
+        if self.array[line - 1][column] != self.WALL:
+            moves.append(directions.UP)
+        if self.array[line + 1][column] != self.WALL:
+            moves.append(directions.DOWN)
+        if self.array[line][column + 1] != self.WALL:
+            moves.append(directions.RIGHT)
+        if self.array[line][column - 1] != self.WALL:
+            moves.append(directions.LEFT)
+
+        return moves
 
     def approved_move(self, column, line):
-        is_move_approved = 0 <= column < 28 and 0 <= line < 29 and self.array[line][column] != 2
+        is_move_approved = self.array[line][column] != 2
 
+        # eat food
         if self.array[line][column] == 1:
             self.array[line][column] = 0
             self.score += 1
 
         return is_move_approved
+
+    def process_events(self, events):
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+
+    def calculate_rules(self):
+        pass

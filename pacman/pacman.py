@@ -1,9 +1,10 @@
 import pygame
 
 from colors import YELLOW, BLACK
+from game_element import GameElement
 
 
-class Pacman:
+class Pacman(GameElement):
     def __init__(self, size):
         self.column = 1
         self.line = 1
@@ -16,6 +17,7 @@ class Pacman:
 
         self.vel_x = 0
         self.vel_y = 0
+        self.key_pressed = None
 
     def calculate_rules(self, scenario):
         if scenario.approved_move(self.column + self.vel_x, self.line + self.vel_y):
@@ -43,7 +45,7 @@ class Pacman:
     def process_events(self, events):
         # Capture events
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN and self.key_pressed is None:
                 if event.key == pygame.K_RIGHT:
                     self.vel_x = 1
                 elif event.key == pygame.K_LEFT:
@@ -52,7 +54,8 @@ class Pacman:
                     self.vel_y = -1
                 elif event.key == pygame.K_DOWN:
                     self.vel_y = 1
-            if event.type == pygame.KEYUP:
+
+            elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
                     self.vel_x = 0
                 elif event.key == pygame.K_LEFT:
